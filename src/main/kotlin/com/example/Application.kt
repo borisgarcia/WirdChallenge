@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.clients.RedisClient
 import com.example.clients.WeatherClient
 import com.example.plugins.*
 import io.ktor.server.application.*
@@ -17,6 +18,9 @@ fun Application.module() {
     configureSerialization()
     configureHTTP()
     configureRouting()
+
+    val redisClient = RedisClient()
+    redisClient.connect()
 
     suspend fun fetchWeatherData() {
         val weatherClient = WeatherClient()

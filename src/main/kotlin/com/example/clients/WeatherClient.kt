@@ -6,6 +6,8 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import java.net.URLEncoder
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class WeatherClient {
     suspend fun getWeatherInfo(city: String) {
@@ -13,6 +15,9 @@ class WeatherClient {
         val redisClient = RedisClient()
 
         if (Math.random() < 0.2) {
+            val key = "Error"+LocalDateTime.now(ZoneOffset.UTC).toString()
+            redisClient.set(key, "The API Request Failed")
+            println(key)
             throw Exception("The API Request Failed")
         }
 
@@ -28,6 +33,7 @@ class WeatherClient {
 
             println(city + ": " + (weatherData?.data?.values?.temperature ?: "No disponible"))
         } catch (e: Exception) {
+            redisClient.set("Error", LocalDateTime.now(ZoneOffset.UTC).toString() + ": Error fetching weather data: $e")
             println("Error fetching weather data: $e")
         } finally {
             httpClient.close()
