@@ -11,6 +11,10 @@ fun Route.weatherRouting() {
         get() {
             val location = call.parameters["location"] ?: return@get call.respondText("Bad Request", status = HttpStatusCode.BadRequest)
             val redisClient = RedisClient()
+
+            if(!redisClient.exists(location))
+                return@get call.respondText("Not Found", status = HttpStatusCode.NotFound)
+
             val temperature = redisClient.get(location)
             call.respondText(temperature);
         }

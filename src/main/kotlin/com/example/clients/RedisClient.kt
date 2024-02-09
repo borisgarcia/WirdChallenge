@@ -1,8 +1,9 @@
 package com.example.clients
+import com.example.config.Config
 import redis.clients.jedis.Jedis
 
 class RedisClient {
-    private val jedis: Jedis = Jedis("localhost", 6379)
+    private val jedis: Jedis = Jedis(Config.instance.redisHost, Config.instance.redisPort)
 
     fun connect() {
         jedis.connect()
@@ -14,5 +15,9 @@ class RedisClient {
 
     fun get(key: String): String{
         return jedis.get(key)
+    }
+
+    fun exists(key: String): Boolean{
+        return jedis.exists(key)
     }
 }

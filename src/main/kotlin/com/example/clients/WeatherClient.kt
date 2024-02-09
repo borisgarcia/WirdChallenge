@@ -1,5 +1,6 @@
 package com.example.clients
 
+import com.example.config.Config
 import com.example.models.WeatherData
 import com.google.gson.Gson
 import io.ktor.client.*
@@ -24,11 +25,10 @@ class WeatherClient {
         val encodedString = URLEncoder.encode(city, "UTF-8")
 
         try {
-            val response = httpClient.get("https://api.tomorrow.io/v4/weather/realtime?location=$encodedString&apikey=2EyKhk8uerYayEBwC9q3QI7eXSBc4OaN")
+            val response = httpClient.get("https://api.tomorrow.io/v4/weather/realtime?location=$encodedString&apikey=${Config.instance.apiKey}")
             val responseString = response.body<String>().toString()
             val weatherData: WeatherData = Gson().fromJson(responseString, WeatherData::class.java)
 
-            //val json = JSON.stringify(person)val json = JSON.stringify(person)
             redisClient.set(city, responseString)
 
             println(city + ": " + (weatherData?.data?.values?.temperature ?: "No disponible"))
